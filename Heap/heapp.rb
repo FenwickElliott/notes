@@ -9,26 +9,27 @@ class Heap
         node.up = @tail
 
         while node.rating > node.up.rating
-            bubble(node)
-            # return puts 'rooted' if node.up == @root
             return reroot(node) if node.up == @root
+            bubble(node)
         end
         move_tail
     end
 
     def reroot(o)
-        puts 'rerooting'
+        @root = o
         l = o.up
         l.up = o
-
+        o_left = o.left
+        o_right = o.right
         if l.left == o
-            o.left = o
-            o.right = l.right
+            o.left = l
+            o.right = l.right if l.right
         else
             o.left = l.left
-            o.right = o
+            o.right = l
         end
-
+        l.left = o_left
+        l.right = o_right
     end
 
     def bubble(o)
@@ -41,7 +42,7 @@ class Heap
         o_left = o.left
         o_right = o.right
 
-        l_up.left == l ? l_up.left = o : l_up.right = o
+        l_up && l_up.left == l ? l_up.left = o : l_up.right = o
         o.up = l_up
 
         l.up = o
