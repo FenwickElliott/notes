@@ -8,7 +8,7 @@ class Heap
         @tail.left ? @tail.right = node : @tail.left = node
         node.up = @tail
 
-        while node.rating > node.up.rating
+        while node.up && node.rating > node.up.rating
             bubble(node)
             # return puts 'rooted' if node.up == @root
             return reroot(node) if node.up == @root
@@ -41,7 +41,7 @@ class Heap
         o_left = o.left
         o_right = o.right
 
-        l_up.left == l ? l_up.left = o : l_up.right = o
+        l_up.left == l ? l_up.left = o : l_up.right = o if l_up
         o.up = l_up
 
         l.up = o

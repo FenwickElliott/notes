@@ -8,14 +8,17 @@ class Heap
         @tail.left ? @tail.right = node : @tail.left = node
         node.up = @tail
 
-        while node.rating > node.up.rating
-            return reroot(node) if node.up == @root
-            bubble(node)
-        end
+        # while node.rating > node.up.rating
+        #     return reroot(node) if node.up == @root
+        #     bubble(node)
+        # end
+
+        bubble(node)
         move_tail
     end
 
     def reroot(o)
+        puts 'rerooting'
         @root = o
         l = o.up
         l.up = o
@@ -23,7 +26,7 @@ class Heap
         o_right = o.right
         if l.left == o
             o.left = l
-            o.right = l.right if l.right
+            o.right = l.right ; l.right.up = o if l.right
         else
             o.left = l.left
             o.right = l
@@ -63,6 +66,50 @@ class Heap
         o = o.up
     end
 
+    def bubble(o)
+        l = o.up
+        while o.rating > l.rating
+            # @root = o if @root == l
+
+            puts "Bubbeling #{o.name} over #{l.name}"
+            puts "Reassigning @root from #{l.name} to #{o.name}" if @root == o
+
+            if l == @root
+                @root = o
+            else
+                l.up.left == l ? l.up.left = o : l.up.right = o
+            end
+
+            l.up = o
+
+            o_left = o.left
+            o_right = o.right
+
+            if l.left == o
+                o.left = l
+                o.right = l.right
+            else
+                o.right = l
+                o.left = l.left
+            end
+
+            l.left = o_left
+            l.right = o_right
+
+
+
+            o = o.up
+            l = o.up
+        end
+    end
+
+    def bubble(o)
+        puts "bubbling #{o.name}"
+        return if o == @root
+
+        bubble(o.up)
+    end
+
     def move_tail
         ar = [@root]
         ar.each do |x|
@@ -76,7 +123,7 @@ class Heap
         count = 0
         while ar.size > 0
             count += 1
-            return if count > 7
+            return puts 'counted out' if count > 7
             ar.each {|c| print c.name + "   "}
             temp = []
             ar.each {|x| 
