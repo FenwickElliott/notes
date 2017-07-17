@@ -8,59 +8,55 @@ class Heap
         @tail.left ? @tail.right = node : @tail.left = node
         node.up = @tail
 
-        while node.up && node.rating > node.up.rating
-            bubble(node)
-            # return puts 'rooted' if node.up == @root
-            return reroot(node) if node.up == @root
-        end
+        bubble(node)
         move_tail
-    end
-
-    def reroot(o)
-        puts 'rerooting'
-        l = o.up
-        l.up = o
-
-        if l.left == o
-            o.left = o
-            o.right = l.right
-        else
-            o.left = l.left
-            o.right = o
-        end
 
     end
 
     def bubble(o)
-        l = o.up
-        l_up = l.up
-        l_left = l.left
-        l_right = l.right
+        if o.rating > o.up.rating
 
-        o_up = o.up
-        o_left = o.left
-        o_right = o.right
+            l = o.up
+            # puts "Bubbeling #{o.name} over #{l.rating}"
+            l_up = l.up ; l_left = l.left ; l_right = l.right
+            o_up = o.up ; o_left = o.left ; o_right = o.right
 
-        l_up.left == l ? l_up.left = o : l_up.right = o if l_up
-        o.up = l_up
+            # liaus up
+            l.up = o
 
-        l.up = o
+            # oedipus down
+            # l_left == o ? (o.left = l ; o.right = l_right ) : (o.left = l_left ; o.right = l)
 
-        o.left.up = l if o.left
-        o.right.up = l if o.right
+            if l_left == o
+                puts "Left: Bubbeling #{o.name} over #{l.rating}"
+                o.left = l
+                o.right = l_right
+            else
+                puts "Right: Bubbeling #{o.name} over #{l.rating}"
+                o.left = l_left
+                o.right = l
+            end
 
-        l.right = o_right
-        l.left = o_left
+            
+            # liaus down
+            l.left = o_left ; l.right = o_right
 
-        if l_left == o
-            o.left = l
-            o.right = l_right
-        elsif l_right == o
-            o.right = l
-            o.left = l_left
+            # grandchildren up 
+            o_left.up = l if o_left
+            o_right.up = l if o_right
+
+            # grandparent down & oedipus up unless reroot
+            if l == @root
+                puts 'rerooting'
+                @root = o
+            else
+                o.up = l_up
+                l_up.left == l ? l_up.left = o : l_up.right = o
+                bubble(o)
+            end
         end
-        o = o.up
     end
+
 
     def move_tail
         ar = [@root]
@@ -69,21 +65,44 @@ class Heap
             x.right ? ar << x.right : (return @tail = x)
         end
     end
+
+      # Recursive Depth First Search
+  def find(root = @root, data)
+    finder = @root
+    while finder.name != data
+      self.find(nil) if data && data == @root.looking_for
+      if finder.left && finder.left.looking_for != data
+        finder = finder.left
+        finder.looking_for = data
+      elsif finder.right && finder.right.looking_for != data
+        finder = finder.right
+        finder.looking_for = data
+      elsif finder.up
+        finder = finder.up
+      else
+        return nil
+      end
+    end
+    finder.printn
+  end
     
     def printf
         ar = [@root]
-        count = 0
+        gen = 0
+        c = 1
         while ar.size > 0
-            count += 1
-            return if count > 7
+            gen += 1
+            return if gen > 7
             ar.each {|c| print c.name + "   "}
             temp = []
             ar.each {|x| 
                 temp << x.left if x.left
                 temp << x.right if x.right
             }
+            c += temp.size
             ar = temp
             puts
         end
+        puts "Count = #{c}"
     end
 end
