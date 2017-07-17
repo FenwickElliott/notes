@@ -23,10 +23,15 @@ class Heap
         #     node = node.up
         # end
 
+        # bubble(node) while node.rating > node.up.rating
+        bubble(node)
         move_tail
-        bubble(node) if node.rating == 99
+        # bubble(node) if node.rating == 99
+        # bubble(node) if node.rating == 99
+
     end
 
+    # redundant
     def root_bubble(o)
         @root = o
         l = o.up
@@ -52,7 +57,7 @@ class Heap
         l.left = o_left
         l.right = o_right
     end
-
+    # redundant
     def swap(o,l)
         @root = o ; o.up = nil if @root == l
 
@@ -73,7 +78,7 @@ class Heap
         l.left = o_ref[1]
         l.right = o_ref[2]
     end
-
+    # redundant
     def bubble(o)
         l = o.up
 
@@ -107,29 +112,36 @@ class Heap
     end
 
     def bubble(o)
-        l = o.up
-        puts "Bubbeling #{o.name} over #{l.rating}"
-        puts 'reroot' if l == @root
-        l_up = l.up ; l_left = l.left ; l_right = l.right
-        o_up = o.up ; o_left = o.left ; o_right = o.right
+        if o.rating > o.up.rating
+            l = o.up
+            puts "Bubbeling #{o.name} over #{l.rating}"
+            puts 'reroot' if l == @root
+            l_up = l.up ; l_left = l.left ; l_right = l.right
+            o_up = o.up ; o_left = o.left ; o_right = o.right
 
-        # grandparent down
-        l_up.left == l ? l_up.left = o : l_up.right = o
-        # oedipus up
-        o.up = l_up
-        # liaus up
-        l.up = o
+            # grandparent down
+            l_up.left == l ? l_up.left = o : l_up.right = o
+            # oedipus up
+            o.up = l_up
+            o.up = Node.new('hi',12)
+            # liaus up
+            l.up = o
 
-        # oedipus down
-        l_left == o ? (o.left = l ; o.right = l_right ) : (o.left = l_left ; o.right = l)
-        # liaus down
-        l.left = o_left ; l.right = o_right
+            # oedipus down
+            l_left == o ? (o.left = l ; o.right = l_right ) : (o.left = l_left ; o.right = l)
+            # liaus down
+            l.left = o_left ; l.right = o_right
 
-        
-        # grandchildren up 
-        l_left.up = o if l_left
-        l_right.up = o if l_right
+            
+            # grandchildren up 
+            l_left.up = o if l_left
+            l_right.up = o if l_right
 
+            # oedipus up wasn't carrying from line 25
+            o.up = l_up
+
+            bubble(o)
+        end
     end
 
 
