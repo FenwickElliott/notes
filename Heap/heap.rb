@@ -8,9 +8,11 @@ class Heap
         @tail.left ? @tail.right = node : @tail.left = node
         node.up = @tail
 
+        
         bubble(node)
         move_tail
-
+        printf
+        puts
     end
 
     def bubble(o)
@@ -21,20 +23,29 @@ class Heap
             l_up = l.up ; l_left = l.left ; l_right = l.right
             o_up = o.up ; o_left = o.left ; o_right = o.right
 
+            # l_up.left == l ? l_up.left = o : l_up.right = o
+
             # liaus up
             l.up = o
 
             # oedipus down
-            # l_left == o ? (o.left = l ; o.right = l_right ) : (o.left = l_left ; o.right = l)
+            l_left == o ? (o.left = l ; o.right = l_right ) : (o.left = l_left ; o.right = l)
 
             if l_left == o
-                puts "Left: Bubbeling #{o.name} over #{l.rating}"
+            # if true
+                puts "Left: Bubbeling #{o.name} over #{l.name}"
                 o.left = l
                 o.right = l_right
-            else
-                puts "Right: Bubbeling #{o.name} over #{l.rating}"
+                o.right.up = o if o.right
+            elsif l_right == o
+                puts "Right: Bubbeling #{o.name} over #{l.name}"
+                o.printn
+                puts
+                l.printn
+                puts
                 o.left = l_left
                 o.right = l
+                o.left.up = o if o.left
             end
 
             
@@ -45,6 +56,7 @@ class Heap
             o_left.up = l if o_left
             o_right.up = l if o_right
 
+
             # grandparent down & oedipus up unless reroot
             if l == @root
                 puts 'rerooting'
@@ -52,6 +64,7 @@ class Heap
             else
                 o.up = l_up
                 l_up.left == l ? l_up.left = o : l_up.right = o
+
                 bubble(o)
             end
         end
@@ -61,8 +74,8 @@ class Heap
     def move_tail
         ar = [@root]
         ar.each do |x|
-            x.left ? ar << x.left : (return @tail = x)
-            x.right ? ar << x.right : (return @tail = x)
+            x.left ? ar << x.left : ( puts "Tail " + @tail.name ; return @tail = x)
+            x.right ? ar << x.right : ( puts "Tail " + @tail.name ; return @tail = x)
         end
     end
 
@@ -92,7 +105,7 @@ class Heap
         c = 1
         while ar.size > 0
             gen += 1
-            return if gen > 7
+            return if gen > 10
             ar.each {|c| print c.name + "   "}
             temp = []
             ar.each {|x| 
